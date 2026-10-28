@@ -1,8 +1,9 @@
 # AI Proposal Triage Design
 
-**Candidate:** Muhammad Fayaz  
+**Candidate:** Muhammad Fayaz
+**Email:** mfayaz21703@gmail.com
 **Reference:** MATACS-TH-2026-02  
-**Time spent:** About 6 hours, spread over a few days.
+**Time spent:** About 6 hours.
 
 ---
 
@@ -43,16 +44,21 @@ This design splits proposal triage between AI and plain code. The AI reads propo
 You do not need to install packages or run a build step.
 
 ### Option 1: Browser UI
+
 Double-click `prototype/index.html` to open it in your browser.
+
 - Data loads through script tags, so it works directly from the local disk without a web server.
 - You can change weights in the panel and see the table recalculate live. A warning appears if the weights do not add up to 100.
 - Click "View" on any row to see the extracted facts and evidence notes.
 
 ### Option 2: Check script (Node.js)
+
 Run the check script from the repository root:
+
 ```bash
 node prototype/check.js
 ```
+
 - Needs Node.js 18 or newer.
 - Runs the scoring logic on the sample data, compares each result against `ranking.json`, and prints `PASS`.
 
