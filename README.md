@@ -1,9 +1,13 @@
 # AI Proposal Triage Design
 
 **Candidate:** Muhammad Fayaz
+
 **Email:** mfayaz21703@gmail.com
+
 **Reference:** MATACS-TH-2026-02  
 **Time spent:** About 6 hours.
+
+
 
 ---
 
