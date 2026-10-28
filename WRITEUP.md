@@ -11,14 +11,14 @@ The design uses AI to read messy proposal text. Plain code handles everything th
 
 **Code does the rest:** PDF text extraction, loading criteria, schema validation, mandatory pass/fail checks, score normalisation, weighted totals, ranking and the audit log.
 
-I drew the line here because AI copes well with varied wording but is poor at repeatable arithmetic. Pass/fail rules and score maths have one right answer, so code is cheaper, testable and the same every time.
+AI copes well with varied wording but is poor at arithmetic. Pass/fail rules and scoring maths have one right answer, so code is cheaper, testable and repeatable.
 
 ## 2. Consistency and explainability
 
 - Temperature 0, versioned prompts, and JSON output checked against a schema.
 - All maths is in code. The same extracted data always gives the same ranking.
-- Model wording can still vary between runs, even at temperature 0. So extraction results are stored, and ranking runs on the stored data. A second extraction run can be compared with the first, and differences are shown to the reviewer.
-- Every extracted value has a quote. The reviewer sees a table per proposal: criterion, extracted value, quote, points, weight. That shows exactly why it ranked where it did.
+- Model wording can vary between runs, even at temperature 0. Storing extraction results ensures ranking always runs on fixed data. A second run can be compared against the first, showing diffs to the reviewer.
+- Every extracted value has a quote. The reviewer sees a table per proposal: criterion, value, quote, points, weight. That shows exactly why it ranked where it did.
 
 ## 3. Human in the loop
 
@@ -30,26 +30,26 @@ I drew the line here because AI copes well with varied wording but is poor at re
 
 ## 4. Changing criteria
 
-Criteria are versioned. An edit creates a new version. Old scores stay linked to the version they were made under and are never silently changed. The screen shows "scored under v2, current is v3".
+Criteria are versioned. An edit creates a new version. Old scores stay linked to the version they were made under and never silently change. The screen shows "scored under v2, current is v3".
 
 The reviewer can re-score on demand:
 
-- Only weights changed: code recalculates from stored extraction, with no AI cost.
-- A criterion was added or changed: only the affected AI step is re-run.
+- Only weights changed: code recalculates from stored extraction at zero AI cost.
+- A criterion changed: only the affected AI step re-runs.
 
-A before/after rank diff is shown, and a final award records the version it used. Rankings are only compared within one version.
+A rank diff is shown, and the final award records the version used. Rankings are compared only within one version.
 
 ## 5. Risks
 
-| Risk             | Safeguard                                                                                                                                                                              |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wrong extraction | Quote per value, schema check, reviewer sees the evidence and can correct it. An ineligible result is shown with its reason for a human to confirm.                                    |
-| Made-up facts    | Missing data is "not stated", never guessed. Code checks each quote actually appears in the proposal text. A failed check flags the proposal.                                          |
-| Bias             | Scoring uses stated facts against a fixed admin rubric. The AI never compares bidders. Writing style is not scored.                                                                    |
-| Manipulation     | Proposal text is treated as untrusted data. Embedded instructions are reported, not followed. Code ignores any rank or score claimed in the text. The proposal is flagged for a human. |
-| Cost             | One extraction call and one check per proposal. Results are stored, so weight changes cost nothing. Upload size limits apply.                                                          |
-| Model drift      | Model name and prompt version are logged and pinned.                                                                                                                                   |
-| Sensitive data   | Proposals stay in the company's own storage. Only the text needed is sent to the model.                                                                                                |
+| Risk             | Safeguard                                                                                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Wrong extraction | Quote per value, schema check, reviewer sees the evidence and can correct it. An ineligible result is shown with its reason for a human to confirm.                      |
+| Made-up facts    | Missing data is "not stated", never guessed. Code checks each quote appears in the proposal text. A failed check flags the proposal.                                    |
+| Bias             | Scoring uses stated facts against a fixed admin rubric. The AI never compares bidders. Writing style is not scored.                                                      |
+| Manipulation     | Proposal text is untrusted. Embedded instructions are reported, not followed. Code ignores any claimed rank or score. The proposal is flagged for a human.               |
+| Cost             | One extraction call and one check per proposal. Results are stored, so weight changes cost nothing. Upload size limits apply.                                            |
+| Model drift      | Model name and prompt version are logged and pinned.                                                                                                                     |
+| Sensitive data   | Proposals stay in the company's own storage. Only the text needed is sent to the model.                                                                                  |
 
 ## Sample set
 
@@ -80,3 +80,4 @@ A before/after rank diff is shown, and a final award records the version it used
 - All proposals are within the budget ceiling of $260,000, so price is scored relative to the lowest eligible bid.
 - A completion time over 16 weeks would fail the timeline limit. None in the sample does.
 - Monitoring and weekly reports are not the same thing, so a weekly report alone does not earn the monitoring points.
+- The experience counts for A, C and E start in 2020 or 2021, so part of their window may fall outside the last five years. The counts need confirming with each bidder.
