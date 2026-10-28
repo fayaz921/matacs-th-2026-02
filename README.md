@@ -2,7 +2,7 @@
 
 **Candidate:** Muhammad Fayaz  
 **Reference:** MATACS-TH-2026-02  
-**Time spent:** About HOURS hours, spread over a few days.
+**Time spent:** About 6 hours, spread over a few days.
 
 ---
 
