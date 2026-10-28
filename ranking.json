@@ -1,0 +1,12 @@
+[
+  { "proposal": "A", "rank": 1, "status": "ranked", "score": 98.0,
+    "reason": "Passes all mandatory checks and scores highest on experience, price, timeline, warranty and team." },
+  { "proposal": "E", "rank": 2, "status": "ranked", "score": 91.7,
+    "reason": "Passes all mandatory checks; best warranty and monitoring, but fewer installs and a higher price than A." },
+  { "proposal": "C", "rank": null, "status": "flagged", "score": 84.8,
+    "reason": "Contains an embedded instruction aimed at automated reviewers; scored on real content only and held for human review." },
+  { "proposal": "D", "rank": null, "status": "flagged", "score": null,
+    "reason": "No completion timeline stated, so the timeline criterion cannot be scored; needs human follow-up." },
+  { "proposal": "B", "rank": null, "status": "ineligible", "score": null,
+    "reason": "Does not hold the Ontario electrical licence itself; licensed subcontractor to be confirmed after award." }
+]
