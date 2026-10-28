@@ -1,0 +1,30 @@
+flowchart TD
+    A["Reviewer uploads proposals and picks category"] --> B["Extract text from PDF (code)"]
+    B --> C["Load admin criteria, weights and version (code)"]
+    C --> D["AI: extract fields with evidence quotes. Proposal text treated as untrusted data"]
+    D --> E["Validate output against schema (code)"]
+    E --> F{"Mandatory criteria met? (code)"}
+    F -- No --> G["Mark ineligible with reason"]
+    F -- Yes --> H["AI: score weighted criteria with evidence"]
+    H --> I{"Injection or missing data? (code rules + AI check)"}
+    I -- Yes --> J["Flag for human review"]
+    I -- No --> K["Compute weighted total and rank (code)"]
+    G --> L["Human review: confirm or override with reason"]
+    J --> L
+    K --> L
+    L --> M["Ranked list with reasons shown"]
+    M --> N["Human makes the award decision"]
+    N --> O["Audit log: inputs, versions, scores, overrides"]
+
+    classDef ai fill:#ffe0b2,stroke:#e65100,color:#000
+    classDef rule fill:#bbdefb,stroke:#1565c0,color:#000
+    classDef human fill:#c8e6c9,stroke:#2e7d32,color:#000
+    class D,H ai
+    class B,C,E,F,K,G,O rule
+    class L,N,J human
+
+    subgraph Legend
+      X1["AI step"]:::ai
+      X2["Rule or code step"]:::rule
+      X3["Human checkpoint"]:::human
+    end
