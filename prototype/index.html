@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Proposal Triage Prototype | MATACS-TH-2026-02</title>
+  <meta name="description" content="Interactive prototype for commercial solar proposal triage and ranking. Evaluates mandatory gates, relative scoring, and human audit flags.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-main">
+        <div class="brand">
+          <div class="logo-mark">⚡</div>
+          <div>
+            <h1>AI Proposal Triage</h1>
+            <p class="subtitle">Commercial Solar PV (100 kW+) · Reference MATACS-TH-2026-02</p>
+          </div>
+        </div>
+        <div class="header-badges">
+          <span class="badge config-badge"><span class="label">Version</span> <span class="val">v1.0</span></span>
+          <span class="badge config-badge"><span class="label">Budget Cap</span> <span class="val">$260,000</span></span>
+          <span class="badge config-badge"><span class="label">Max Timeline</span> <span class="val">16 wks</span></span>
+        </div>
+      </div>
+      <div class="header-banner">
+        <div class="banner-item">
+          <span class="dot mandatory-dot"></span>
+          <strong>Mandatory Gate:</strong> Bidder electrical licence, WSIB clearance, $5M liability insurance. Fail = Ineligible.
+        </div>
+        <div class="banner-item">
+          <span class="dot code-dot"></span>
+          <strong>Core Rule:</strong> AI extracts facts &amp; notes; deterministic code calculates scores &amp; ranks. Human decides.
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Weight Adjustment Panel -->
+      <section class="card weights-card" aria-labelledby="weights-heading">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 id="weights-heading">Evaluation Weights Config</h2>
+            <span class="helper-text">Recalculates scoring and ranking live in code</span>
+          </div>
+          <div class="weights-header-actions">
+            <div id="weight-sum-indicator" class="weight-sum valid" aria-live="polite">
+              Total: <span id="weight-total-val">100</span>%
+            </div>
+            <button id="reset-weights-btn" class="btn btn-secondary" type="button">Reset Defaults</button>
+          </div>
+        </div>
+
+        <div id="weight-warning" class="weight-warning-alert hidden" role="alert">
+          <span class="alert-icon">⚠️</span>
+          <span id="weight-warning-text">Weights must total exactly 100% (currently <strong id="current-weight-sum">100%</strong>).</span>
+        </div>
+
+        <div class="weight-controls-grid">
+          <div class="weight-control">
+            <div class="control-label-row">
+              <label for="weight-experience">Experience</label>
+              <span class="weight-pct-display" id="disp-experience">30%</span>
+            </div>
+            <div class="input-row">
+              <input type="range" id="range-experience" min="0" max="100" step="1" value="30" aria-label="Experience weight slider">
+              <input type="number" id="weight-experience" class="number-input" min="0" max="100" step="1" value="30" aria-label="Experience weight number">
+            </div>
+            <span class="criterion-hint">Installs &ge; 100 kW in 5 yrs (max 10)</span>
+          </div>
+
+          <div class="weight-control">
+            <div class="control-label-row">
+              <label for="weight-price">Price</label>
+              <span class="weight-pct-display" id="disp-price">25%</span>
+            </div>
+            <div class="input-row">
+              <input type="range" id="range-price" min="0" max="100" step="1" value="25" aria-label="Price weight slider">
+              <input type="number" id="weight-price" class="number-input" min="0" max="100" step="1" value="25" aria-label="Price weight number">
+            </div>
+            <span class="criterion-hint">Relative to lowest eligible bid</span>
+          </div>
+
+          <div class="weight-control">
+            <div class="control-label-row">
+              <label for="weight-timeline">Timeline</label>
+              <span class="weight-pct-display" id="disp-timeline">15%</span>
+            </div>
+            <div class="input-row">
+              <input type="range" id="range-timeline" min="0" max="100" step="1" value="15" aria-label="Timeline weight slider">
+              <input type="number" id="weight-timeline" class="number-input" min="0" max="100" step="1" value="15" aria-label="Timeline weight number">
+            </div>
+            <span class="criterion-hint">Relative to shortest eligible duration</span>
+          </div>
+
+          <div class="weight-control">
+            <div class="control-label-row">
+              <label for="weight-warranty">Warranty</label>
+              <span class="weight-pct-display" id="disp-warranty">15%</span>
+            </div>
+            <div class="input-row">
+              <input type="range" id="range-warranty" min="0" max="100" step="1" value="15" aria-label="Warranty weight slider">
+              <input type="number" id="weight-warranty" class="number-input" min="0" max="100" step="1" value="15" aria-label="Warranty weight number">
+            </div>
+            <span class="criterion-hint">Panel (25y cap) &amp; Workmanship (12y cap)</span>
+          </div>
+
+          <div class="weight-control">
+            <div class="control-label-row">
+              <label for="weight-team">Team &amp; Approach</label>
+              <span class="weight-pct-display" id="disp-team">15%</span>
+            </div>
+            <div class="input-row">
+              <input type="range" id="range-team" min="0" max="100" step="1" value="15" aria-label="Team weight slider">
+              <input type="number" id="weight-team" class="number-input" min="0" max="100" step="1" value="15" aria-label="Team weight number">
+            </div>
+            <span class="criterion-hint">25 pts each: Lead, Crew, Safety, Monitoring</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Baseline Status Banner -->
+      <section class="baseline-summary-bar">
+        <div class="summary-stat">
+          <span class="stat-label">Eligible Baseline Lowest Price</span>
+          <span class="stat-value" id="stat-min-price">$231,000 CAD (D)</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Eligible Baseline Shortest Timeline</span>
+          <span class="stat-value" id="stat-min-weeks">12 weeks (A)</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Proposals Evaluated</span>
+          <span class="stat-value">5 (A, B, C, D, E)</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Status Summary</span>
+          <span class="stat-value" id="stat-status-summary">2 Ranked · 2 Flagged · 1 Ineligible</span>
+        </div>
+      </section>
+
+      <!-- Results Table Card -->
+      <section class="card table-card" aria-labelledby="results-heading">
+        <div class="card-header table-card-header">
+          <div>
+            <h2 id="results-heading">Triage &amp; Evaluation Results</h2>
+            <p class="helper-text">Sorted by Rank (eligible ranked proposals), then Flagged for review, then Ineligible</p>
+          </div>
+          <div class="legend-row">
+            <span class="legend-item"><span class="badge badge-ranked">Ranked</span> Ready for award</span>
+            <span class="legend-item"><span class="badge badge-flagged">Flagged</span> Review required</span>
+            <span class="legend-item"><span class="badge badge-ineligible">Ineligible</span> Mandatory fail</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="results-table" id="proposals-table">
+            <thead>
+              <tr>
+                <th scope="col" class="th-rank">Rank</th>
+                <th scope="col" class="th-proposal">Proposal</th>
+                <th scope="col" class="th-status">Status</th>
+                <th scope="col" class="th-score">Total Score</th>
+                <th scope="col" class="th-breakdown">Experience (<span id="th-w-exp">30</span>)</th>
+                <th scope="col" class="th-breakdown">Price (<span id="th-w-price">25</span>)</th>
+                <th scope="col" class="th-breakdown">Timeline (<span id="th-w-time">15</span>)</th>
+                <th scope="col" class="th-breakdown">Warranty (<span id="th-w-warr">15</span>)</th>
+                <th scope="col" class="th-breakdown">Team (<span id="th-w-team">15</span>)</th>
+                <th scope="col" class="th-reason">Findings &amp; Audit Reason</th>
+                <th scope="col" class="th-action">Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="results-tbody">
+              <!-- Rendered dynamically by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Detail Modal / Drawer for Paraphrased Evidence Notes -->
+      <div id="evidence-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-proposal-title">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h3 id="modal-proposal-title">Proposal Evidence Notes</h3>
+              <p class="modal-subtitle" id="modal-proposal-subtitle">Paraphrased extraction facts and audit checks</p>
+            </div>
+            <button id="modal-close-btn" class="modal-close" type="button" aria-label="Close modal">&times;</button>
+          </div>
+          <div class="modal-body" id="modal-body-content">
+            <!-- Populated dynamically -->
+          </div>
+          <div class="modal-footer">
+            <button id="modal-done-btn" class="btn btn-secondary" type="button">Close</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p><strong>Design Principles:</strong> AI copes with diverse text to extract facts and quotes; pure deterministic code executes mandatory gates, mathematical scoring, and ranking. Untrusted text cannot alter scoring formulas.</p>
+        <p class="copyright">MATACS-TH-2026-02 · Candidate Assessment Prototype</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts loaded synchronously without fetch, ensuring standalone double-click execution -->
+  <script src="criteria.js"></script>
+  <script src="extracted.js"></script>
+  <script src="scoring.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
